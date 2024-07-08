@@ -9,7 +9,7 @@ class LivrosImagensService {
     } catch (err) {
       throw new Error(err.message);
     }
-  };
+  }
 
   async listarImagemPorId(id) {
     try {
@@ -19,12 +19,24 @@ class LivrosImagensService {
     } catch (err) {
       throw new Error(err.message);
     }
-  };
+  }
 
   async cadastrarImagem(req) {
     try {
       const buffer = req.file.buffer;
       const base64Image = buffer.toString('base64');
+
+      if (!req.body.livroId) {
+        throw new Error('O id do livro é obrigatório.');
+      }
+
+      if (req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
+        throw new Error(`O formato ${req.file.mimetype} não é permitido.`);
+      }
+
+      if (req.file.size > 5000) {
+        throw new Error('O tamanho máximo do arquivo é 5000kB.');
+      }
 
       const data = {
         livro_id: req.body.livroId,
@@ -41,7 +53,7 @@ class LivrosImagensService {
     } catch (err) {
       throw new Error(err.message);
     }
-  };
+  }
 
   async atualizarImagem(id, body) {
     try {
@@ -53,17 +65,17 @@ class LivrosImagensService {
     } catch (err) {
       throw new Error(err.message);
     }
-  };
+  }
 
   async excluirImagemLivro(id) {
     try {
       await LivroImagem.excluir(id);
-      
+
       return { message: 'imagem excluído' };
     } catch (err) {
       throw new Error(err.message);
     }
-  };
+  }
 }
 
 export default LivrosImagensService;
